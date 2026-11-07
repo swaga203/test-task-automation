@@ -22,8 +22,8 @@ def CaptureVideo_Magento(
         "const highlight = document.createElement('div');"
         "highlight.id = 'custom-cursor-highlight';"
         "highlight.style.position = 'fixed';"
-        "highlight.style.width = '44px';"
-        "highlight.style.height = '44px';"
+        "highlight.style.width = '64px';"
+        "highlight.style.height = '64px';"
         "highlight.style.backgroundColor = 'rgba(255, 235, 59, 0.35)';"
         "highlight.style.border = '1px solid rgba(255, 193, 7, 0.5)';"
         "highlight.style.borderRadius = '50%';"
@@ -49,8 +49,8 @@ def CaptureVideo_Magento(
         "const cursor = document.createElement('div');"
         "cursor.id = 'custom-svg-cursor';"
         "cursor.style.position = 'fixed';"
-        "cursor.style.width = '24px';"
-        "cursor.style.height = '24px';"
+        "cursor.style.width = '32px';"
+        "cursor.style.height = '32px';"
         "cursor.style.pointerEvents = 'none';"
         "cursor.style.zIndex = '2147483647';"
         "cursor.style.transform = 'translate(0, 0)';"
@@ -130,6 +130,9 @@ def CaptureVideo_Magento(
             context.add_init_script(cursor_init_script)
             
             page = context.new_page()
+
+            page.mouse.move(0, 0)
+
             page.goto(url)
             page.wait_for_load_state("load")
             time.sleep(1)
@@ -142,9 +145,9 @@ def CaptureVideo_Magento(
             
             box = search_box.bounding_box()
             if box:
-                page.mouse.move(box["x"] + box["width"]/2, box["y"] + box["height"]/2, steps=25)
+                page.mouse.move(box["x"] + box["width"]/2, box["y"] + box["height"]/2, steps=45)
             
-            search_box.click()
+            page.mouse.click(box["x"] + box["width"]/2, box["y"] + box["height"]/2)
             time.sleep(0.5)
 
             query = f"Magento developer in {city}"
@@ -152,6 +155,9 @@ def CaptureVideo_Magento(
                 page.keyboard.type(char, delay=100)
             
             time.sleep(0.5)
+
+            current_x = box["x"] + box["width"]/2
+            current_y = box["y"] + box["height"]/2
 
             page.keyboard.press("Enter")
 
@@ -161,9 +167,15 @@ def CaptureVideo_Magento(
 
             res_box = result_item.bounding_box()
             if res_box:
-                page.mouse.move(res_box["x"] + 15, res_box["y"] + 10, steps=25)
+                target_x = res_box["x"] + 15
+                target_y = res_box["y"] + 10
+                
+                page.mouse.move(current_x, current_y)
+                
+                page.mouse.move(target_x, target_y, steps=45)
                 time.sleep(0.5)
-                result_item.click()
+                
+                page.mouse.click(target_x, target_y)
             else:
                 result_item.click()
             
